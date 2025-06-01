@@ -28,6 +28,13 @@ async def analyze_image(payload: AnalyzeImageRequest):
         print("📥 Step 1: Decode base64 image")
         image_data = base64.b64decode(payload.image_base64)
         image = Image.open(BytesIO(image_data))
+        max_width = 800
+
+        if image.width > max_width:
+            ratio = max_width / float(image.width)
+            new_height = int(float(image.height) * ratio)
+            image = image.resize((max_width, new_height), Image.Resampling.LANCZOS)
+            print(f"📐 Image resized to: {image.size}")
 
         print("🧠 Step 2: Build prompt")
         prompt = generate_ai_analysis_prompt()
